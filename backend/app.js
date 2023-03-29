@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const Thing = require('./models/thing');
+const stuffRoutes = require('./routes/stuff');
+
 
 mongoose.connect('mongodb+srv://vjeanty02:jesus123@cluster0.1sagvzb.mongodb.net/?retryWrites=true&w=majority',
   { useNewUrlParser: true,
@@ -26,25 +27,6 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
 });
-app.delete('/api/stuff/:id', (req, res, next) => {
-  Thing.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
-    .catch(error => res.status(400).json({ error }));
-});
-app.put('/api/stuff/:id', (req, res, next) => {
-  Thing.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Objet modifié !'}))
-    .catch(error => res.status(400).json({ error }));
-});
-app.get('/api/stuff', (req, res, next) => {
-  Thing.find()
-    .then(things => res.status(200).json(things))
-    .catch(error => res.status(400).json({ error }));
-});
-app.get('/api/stuff/:id', (req, res, next) => {
-  Thing.findOne({ _id: req.params.id })
-    .then(thing => res.status(200).json(thing))
-    .catch(error => res.status(404).json({ error }));
-});
+app.use('/api/stuff', stuffRoutes);
 
 module.exports = app;
