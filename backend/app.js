@@ -2,13 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const stuffRoutes = require('./routes/stuff');
 const userRoutes = require('./routes/user');
-const cors = require('cors');
-
 const app = express();
 
-app.use(cors());
-app.use('/api/stuff', stuffRoutes);
-app.use('/api/auth', userRoutes);
+require("dotenv").config();
+const path = require("path");
+
+
 
 mongoose.connect('mongodb+srv://vjeanty02:jesus123@cluster0.1sagvzb.mongodb.net/?retryWrites=true&w=majority',
   { useNewUrlParser: true,
@@ -24,15 +23,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/api/stuff', (req, res, next) => {
-  delete req.body._id;
-  const thing = new Thing({
-    ...req.body
-  });
-  thing.save()
-    .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
-    .catch(error => res.status(400).json({ error }));
-});
-
+app.use("/api/stuff", stuffRoutes);
+app.use("/api/auth", userRoutes);
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 module.exports = app;
